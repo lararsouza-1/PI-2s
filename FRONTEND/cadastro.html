@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Criar conta — Anvellis</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body data-pagina="cadastro">
+  <main class="centro">
+    <form class="cartao-cadastro" id="form-cadastro" novalidate>
+      <div class="logo" role="img" aria-label="Anvellis">
+        <span class="logo__script" aria-hidden="true">the</span>
+        <span class="logo__nome" aria-hidden="true">ANVELLIS</span>
+      </div>
+      <h1>Criar conta</h1>
+
+      <div class="campo">
+        <label class="campo__rotulo" for="nome">Nome completo</label>
+        <input class="campo__entrada" id="nome" name="nome" type="text" placeholder="Seu nome" autocomplete="name">
+        <p class="campo__erro" id="nome-erro" hidden></p>
+      </div>
+
+      <div class="campo">
+        <label class="campo__rotulo" for="email">E-mail</label>
+        <input class="campo__entrada" id="email" name="email" type="email" placeholder="seuemail@anvellis.com"
+          autocomplete="email">
+        <p class="campo__erro" id="email-erro" hidden></p>
+      </div>
+
+      <div class="campo">
+        <label class="campo__rotulo" for="senha">Senha</label>
+        <input class="campo__entrada" id="senha" name="senha" type="password" placeholder="Mínimo de 6 caracteres"
+          autocomplete="new-password">
+        <p class="campo__erro" id="senha-erro" hidden></p>
+      </div>
+
+      <div class="campo">
+        <label class="campo__rotulo" for="confirmar">Confirmar senha</label>
+        <input class="campo__entrada" id="confirmar" name="confirmar" type="password" placeholder="Repita a senha"
+          autocomplete="new-password">
+        <p class="campo__erro" id="confirmar-erro" hidden></p>
+      </div>
+
+      <button class="btn btn--primary btn--bloco" type="submit">Criar conta</button>
+      <p class="cartao-cadastro__rodape">Já possui uma conta? <a href="index.html">Entrar</a></p>
+    </form>
+  </main>
+  <noscript>Este sistema precisa de JavaScript para funcionar.</noscript>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
