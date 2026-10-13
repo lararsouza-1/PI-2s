@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar — Anvellis</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body data-pagina="login">
+  <div class="login">
+
+    <section class="login__marca">
+      <img class="login__imagem" src="img/logo_vermelha.jpeg" alt="Anvellis" width="1131" height="1600">
+    </section>
+
+    <main class="login__painel">
+      <form class="login__form" id="form-login" novalidate>
+        <div>
+          <h1 class="titulo-pagina">Bem-vindo à Anvellis</h1>
+        </div>
+        <p class="login__sub">Acesse o sistema para gerenciar produtos, estoque e vendas.</p>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="email">E-mail</label>
+          <input class="campo__entrada" id="email" name="email" type="email" placeholder="seuemail@anvellis.com"
+            autocomplete="email">
+          <p class="campo__erro" id="email-erro" hidden></p>
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="senha">Senha</label>
+          <input class="campo__entrada" id="senha" name="senha" type="password" placeholder="Digite sua senha"
+            autocomplete="current-password">
+          <p class="campo__erro" id="senha-erro" hidden></p>
+        </div>
+
+        <div class="login__opcoes">
+          <label class="check"><input type="checkbox" name="lembrar" id="lembrar"> Lembrar de mim</label>
+          <button class="link" type="button" id="btn-esqueci">Esqueci minha senha</button>
+        </div>
+
+        <button class="btn btn--primary btn--bloco" type="submit">Entrar</button>
+
+        <p class="login__rodape">Ainda não possui uma conta? <a href="cadastro.html">Cadastre-se</a></p>
+
+      </form>
+    </main>
+
+  </div>
+  <noscript>Este sistema precisa de JavaScript para funcionar.</noscript>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
