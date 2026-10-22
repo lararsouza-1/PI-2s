@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vendas — Anvellis</title>
+
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23681121'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Georgia' font-weight='700' text-anchor='middle' fill='white'%3EA%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body data-pagina="vendas">
+    <div class="app">
+
+        <aside class="sidebar">
+            <div class="sidebar__logo">
+                <div class="logo" role="img" aria-label="Anvellis">
+                    <span class="logo__script" aria-hidden="true">the</span>
+                    <span class="logo__nome" aria-hidden="true">ANVELLIS</span>
+                </div>
+            </div>
+            <nav class="sidebar__nav" aria-label="Menu principal">
+                <a class="nav-item" href="dashboard.html"><span class="nav-item__icone"
+                        aria-hidden="true">▦</span>Dashboard</a>
+                <a class="nav-item" href="produtos.html"><span class="nav-item__icone"
+                        aria-hidden="true">◆</span>Produtos</a>
+                <a class="nav-item" href="estoque.html"><span class="nav-item__icone"
+                        aria-hidden="true">▤</span>Estoque</a>
+                <a class="nav-item" href="vendas.html" aria-current="page"><span class="nav-item__icone"
+                        aria-hidden="true">$</span>Vendas</a>
+            </nav>
+            <div class="sidebar__rodape">
+                <button class="nav-item" type="button" data-abrir="modal-configuracoes"><span class="nav-item__icone"
+                        aria-hidden="true">⚙</span>Configurações</button>
+                <button class="nav-item" type="button" data-abrir="modal-sair"><span class="nav-item__icone"
+                        aria-hidden="true">⏻</span>Sair</button>
+            </div>
+        </aside>
+
+        <main class="main">
+
+            <header class="header">
+                <div>
+                    <h1>Vendas</h1>
+                    <p class="header__subtitulo">Consulte e registre as vendas da loja.</p>
+                </div>
+                <div class="header__acoes">
+                    <button class="sino" id="sino" type="button" aria-label="Notificações"
+                        data-abrir="modal-notificacoes">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                            <path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" />
+                        </svg>
+                        <span class="sino__contador" id="sino-contador" hidden></span>
+                    </button>
+                    <div class="usuario">
+                        <span class="usuario__avatar" aria-hidden="true" data-campo="usuario-inicial"></span>
+                        <div class="usuario__texto">
+                            <p class="usuario__nome">Olá, <span data-campo="usuario-nome"></span></p>
+                            <p class="usuario__cargo">Administrador</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="conteudo">
+
+                <div class="barra">
+                    <div class="barra__esquerda">
+                        <label class="busca">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" />
+                                <path d="m20 20-3.5-3.5" />
+                            </svg>
+                            <input type="search" id="busca" placeholder="Buscar venda..." aria-label="Buscar venda..."
+                                autocomplete="off">
+                        </label>
+                        <button class="btn-filtro" type="button" data-abrir="modal-venda-filtrar">⇅ Filtrar <span
+                                class="btn-filtro__contador" id="contador-filtros" hidden></span></button>
+                    </div>
+                    <button class="btn btn--primary" type="button" data-abrir="modal-venda-nova">+ Nova venda</button>
+                </div>
+
+                <p class="vazio" id="estado-carregando" role="status">Carregando…</p>
+                <div class="cartao estado-erro" id="estado-erro" role="alert" hidden>
+                    <p class="estado-erro__titulo" data-campo="titulo"></p>
+                    <p class="vazio" data-campo="mensagem"></p>
+                    <button class="btn btn--secondary" type="button" id="btn-tentar-novamente">Tentar novamente</button>
+                </div>
+
+                <div class="conteudo__area" id="area-conteudo" hidden>
+                    <div class="tabela-caixa">
+                        <table class="tabela">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Data</th>
+                                    <th scope="col">Cliente</th>
+                                    <th scope="col">Produtos</th>
+                                    <th scope="col">Valor</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-corpo"></tbody>
+                        </table>
+                        <p class="tabela__vazio" id="estado-vazio" hidden>Nenhuma venda encontrada. Limpe os filtros ou
+                            registre uma
+                            nova venda.</p>
+                    </div>
+                </div>
+
+                <template id="tpl-linha">
+                    <tr class="linha-clicavel" tabindex="0" role="button" data-abrir="modal-venda-detalhes">
+                        <td><span class="sr-only">Ver detalhes da venda </span><span data-campo="id"></span></td>
+                        <td data-campo="data"></td>
+                        <td data-campo="cliente"></td>
+                        <td data-campo="produto"></td>
+                        <td data-campo="total"></td>
+                        <td><span class="badge" data-campo="status"></span></td>
+                    </tr>
+                </template>
+
+            </div>
+        </main>
+    </div>
+
+    <main class="centro" id="tela-erro" hidden>
+        <section class="cartao tela-erro" role="alert">
+            <h1 class="tela-erro__titulo" data-campo="titulo"></h1>
+            <p class="vazio" data-campo="mensagem"></p>
+            <button class="btn btn--primary" type="button" id="btn-recarregar">Tentar novamente</button>
+        </section>
+    </main>
+
+    <div class="modal-overlay" id="modal-venda-nova" hidden>
+        <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-venda-nova-titulo" novalidate
+            data-acao="salvar-venda-nova">
+            <header class="modal__cabecalho">
+                <h2 class="modal__titulo" id="modal-venda-nova-titulo">Nova venda</h2>
+                <p class="modal__subtitulo">Preencha os dados abaixo</p>
+            </header>
+            <div class="modal__corpo">
+                <div class="campo">
+                    <label class="campo__rotulo" for="vn-cliente">Cliente</label>
+                    <input class="campo__entrada" id="vn-cliente" name="cliente" type="text"
+                        placeholder="Nome do cliente" autocomplete="name" required minlength="2"
+                        data-msg-obrigatorio="Informe o nome do cliente." data-msg-minimo="Informe o nome do cliente."
+                        aria-describedby="vn-cliente-erro">
+                    <p class="campo__erro" id="vn-cliente-erro" hidden></p>
+                </div>
+                <div class="campo">
+                    <label class="campo__rotulo" for="vn-produto">Produto</label>
+                    <select class="campo__entrada" id="vn-produto" name="produto_id" required
+                        data-msg-obrigatorio="Selecione um produto." aria-describedby="vn-produto-erro">
+                        <option value="">Selecione um produto</option>
+                    </select>
+                    <p class="campo__erro" id="vn-produto-erro" hidden></p>
+                </div>
+                <div class="campo">
+                    <label class="campo__rotulo" for="vn-quantidade">Quantidade</label>
+                    <input class="campo__entrada" id="vn-quantidade" name="quantidade" type="number" autocomplete="off"
+                        value="1" min="1" step="1" inputmode="numeric" required
+                        data-msg-obrigatorio="Informe a quantidade."
+                        data-msg-numero="Informe uma quantidade de 1 para cima." data-msg-max="Só há {max} em estoque."
+                        aria-describedby="vn-quantidade-erro">
+                    <p class="campo__erro" id="vn-quantidade-erro" hidden></p>
+                </div>
+                <div class="campo">
+                    <label class="campo__rotulo" for="vn-valor">Valor unitário</label>
+                    <input class="campo__entrada" id="vn-valor" name="valor_unitario" type="text" placeholder="R$ 0,00"
+                        autocomplete="off" inputmode="decimal" data-tipo="moeda" required
+                        data-msg-obrigatorio="Informe o valor unitário. Ex: R$ 890,00"
+                        data-msg-moeda="Informe um valor maior que zero. Ex: R$ 890,00"
+                        aria-describedby="vn-valor-erro">
+                    <p class="campo__erro" id="vn-valor-erro" hidden></p>
+                </div>
+                <div class="campo">
+                    <label class="campo__rotulo" for="vn-pagamento">Forma de pagamento</label>
+                    <select class="campo__entrada" id="vn-pagamento" name="pagamento" required
+                        data-msg-obrigatorio="Selecione a forma de pagamento." aria-describedby="vn-pagamento-erro">
+                        <option value="">Selecione</option>
+                        <option value="Cartão">Cartão</option>
+                        <option value="Pix">Pix</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                    </select>
+                    <p class="campo__erro" id="vn-pagamento-erro" hidden></p>
+                </div>
+                <div class="resumo">
+                    <p class="resumo__titulo">Resumo da venda</p>
+                    <div class="resumo__linha">
+                        <span>Valor total</span>
+                        <output class="resumo__total" id="venda-total" aria-live="polite">R$ 0,00</output>
+                    </div>
+                </div>
+            </div>
+            <p class="modal__alerta" role="alert" hidden></p>
+            <footer class="modal__rodape">
+                <button class="btn btn--secondary" type="button" data-fechar>Cancelar</button>
+                <button class="btn btn--primary" type="submit" data-texto-ocupado="Salvando…">Finalizar venda</button>
+            </footer>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="modal-venda-detalhes" hidden>
+        <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-venda-detalhes-titulo" novalidate>
+            <header class="modal__cabecalho">
+                <h2 class="modal__titulo" id="modal-venda-detalhes-titulo" data-campo="titulo">Detalhes da venda</h2>
+                <p class="modal__subtitulo" data-campo="data"></p>
+            </header>
+            <div class="modal__corpo">
+                <dl class="detalhes">
+                    <div class="detalhes__linha">
+                        <dt>Cliente</dt>
+                        <dd><span data-campo="cliente"></span></dd>
+                    </div>
+                    <div class="detalhes__linha">
+                        <dt>Produto</dt>
+                        <dd><span data-campo="produto"></span></dd>
+                    </div>
+                    <div class="detalhes__linha">
+                        <dt>Quantidade</dt>
+                        <dd><span data-campo="quantidade"></span></dd>
+                    </div>
+                    <div class="detalhes__linha">
+                        <dt>Forma de pagamento</dt>
+                        <dd><span data-campo="pagamento"></span></dd>
+                    </div>
+                    <div class="detalhes__linha">
+                        <dt>Status</dt>
+                        <dd><span class="badge" data-campo="status"></span></dd>
+                    </div>
+                </dl>
+                <div class="separador"></div>
+                <dl class="detalhes">
+                    <div class="detalhes__linha">
+                        <dt>Valor total</dt>
+                        <dd><span class="resumo__total" data-campo="total"></span></dd>
+                    </div>
+                </dl>
+            </div>
+            <p class="modal__alerta" role="alert" hidden></p>
+            <footer class="modal__rodape">
+                <button class="btn btn--secondary" type="button" id="btn-fechar-detalhes" data-fechar>Fechar</button>
+                <button class="btn btn--danger" type="button" id="btn-cancelar-venda"
+                    data-abrir="modal-venda-cancelar">Cancelar
+                    venda</button>
+            </footer>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="modal-venda-cancelar" hidden>
+        <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-venda-cancelar-titulo" novalidate
+            data-acao="cancelar-venda" data-foco-cancelar>
+            <header class="modal__cabecalho">
+                <div class="modal__icone modal__icone--perigo" aria-hidden="true">!</div>
+                <h2 class="modal__titulo" id="modal-venda-cancelar-titulo">Cancelar venda?</h2>
+                <p class="modal__subtitulo">A venda <span data-campo="id"></span> será marcada como cancelada e o item
+                    voltará
+                    ao estoque.</p>
+            </header>
+            <p class="modal__alerta" role="alert" hidden></p>
+            <footer class="modal__rodape">
+                <button class="btn btn--secondary" type="button" data-fechar>Voltar</button>
+                <button class="btn btn--danger" type="submit" data-texto-ocupado="Cancelando…">Cancelar venda</button>
+            </footer>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="modal-venda-filtrar" hidden>
+        <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-venda-filtrar-titulo" novalidate
+            data-acao="aplicar-filtros-vendas">
+            <header class="modal__cabecalho">
+                <h2 class="modal__titulo" id="modal-venda-filtrar-titulo">Filtrar vendas</h2>
+                <p class="modal__subtitulo">Refine a lista de vendas.</p>
+            </header>
+            <div class="modal__corpo">
+                <div class="campo">
+                    <label class="campo__rotulo" for="fv-cliente">Cliente</label>
+                    <input class="campo__entrada" id="fv-cliente" name="cliente" type="text"
+                        placeholder="Buscar por cliente" autocomplete="off" aria-describedby="fv-cliente-erro">
+                    <p class="campo__erro" id="fv-cliente-erro" hidden></p>
+                </div>
+                <div class="campo">
+                    <label class="campo__rotulo" for="fv-de">Período inicial</label>
+                    <input class="campo__entrada" id="fv-de" name="de" type="date" autocomplete="off"
+                        aria-describedby="fv-de-erro">
+                    <p class="campo__erro" id="fv-de-erro" hidden></p>
+                </div>
+                <div class="campo">
+                    <label class="campo__rotulo" for="fv-ate">Período final</label>
+                    <input class="campo__entrada" id="fv-ate" name="ate" type="date" autocomplete="off"
+                        data-maior-ou-igual-a="de" data-msg-maior-ou-igual="A data final deve ser depois da inicial."
+                        aria-describedby="fv-ate-erro">
+                    <p class="campo__erro" id="fv-ate-erro" hidden></p>
+                </div>
+                <fieldset class="grupo-checks">
+                    <legend>Status (sem seleção mostra todos)</legend>
+                    <label class="check"><input type="checkbox" name="status" value="Concluída"> Concluída</label>
+                    <label class="check"><input type="checkbox" name="status" value="Pendente"> Pendente</label>
+                    <label class="check"><input type="checkbox" name="status" value="Cancelada"> Cancelada</label>
+                </fieldset>
+            </div>
+            <p class="modal__alerta" role="alert" hidden></p>
+            <footer class="modal__rodape">
+                <button class="btn btn--secondary" type="button" data-clique="limpar-filtros">Limpar filtros</button>
+                <button class="btn btn--primary" type="submit" data-texto-ocupado="Aplicando…">Aplicar filtros</button>
+            </footer>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="modal-notificacoes" hidden>
+        <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-notificacoes-titulo" novalidate>
+            <header class="modal__cabecalho">
+                <h2 class="modal__titulo" id="modal-notificacoes-titulo">Notificações</h2>
+                <p class="modal__subtitulo" data-campo="resumo"></p>
+            </header>
+            <div class="modal__corpo">
+                <ul class="notificacoes" id="notificacoes-lista"></ul>
+                <p class="vazio" id="notificacoes-vazio" hidden>Nenhuma notificação por enquanto.</p>
+                <template id="tpl-notificacao">
+                    <li class="notificacao">
+                        <span class="notificacao__ponto" aria-hidden="true"></span>
+                        <div>
+                            <p class="notificacao__titulo" data-campo="titulo"></p>
+                            <p class="notificacao__texto" data-campo="texto"></p>
+                            <p class="notificacao__hora" data-campo="hora"></p>
+                        </div>
+                    </li>
+                </template>
+            </div>
+            <p class="modal__alerta" role="alert" hidden></p>
+            <footer class="modal__rodape">
+                <button class="btn btn--secondary" type="button" data-clique="marcar-lidas">Marcar como lidas</button>
+                <button class="btn btn--primary" type="button" data-fechar>Fechar</button>
+            </footer>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="modal-configuracoes" hidden>
+        <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-configuracoes-titulo" novalidate
+            data-acao="salvar-configuracoes">
+            <header class="modal__cabecalho">
+                <h2 class="modal__titulo" id="modal-configuracoes-titulo">Configurações</h2>
+                <p class="modal__subtitulo">Gerencie as preferências da loja e do sistema.</p>
+            </header>
+            <div class="modal__corpo">
+                <div class="campo">
+                    <label class="campo__rotulo" for="cfg-nome">Nome da loja</label>
+                    <input class="campo__entrada" id="cfg-nome" name="nome_loja" type="text" autocomplete="off" required
+                        minlength="2" data-msg-obrigatorio="Informe o nome da loja."
+                        data-msg-minimo="Informe o nome da loja." aria-describedby="cfg-nome-erro">
+                    <p class="campo__erro" id="cfg-nome-erro" hidden></p>
+                </div>
+                <div class="campo">
+                    <label class="campo__rotulo" for="cfg-email">E-mail de contato</label>
+                    <input class="campo__entrada" id="cfg-email" name="email" type="email" autocomplete="email" required
+                        data-msg-obrigatorio="Informe um e-mail válido." data-msg-email="Informe um e-mail válido."
+                        aria-describedby="cfg-email-erro">
+                    <p class="campo__erro" id="cfg-email-erro" hidden></p>
+                </div>
+                <div class="preferencias">
+                    <div class="preferencia">
+                        <div>
+                            <p class="preferencia__titulo" id="cfg-avisos_email-t">Notificações por e-mail</p>
+                            <p class="preferencia__descricao">Receber avisos de vendas e estoque</p>
+                        </div>
+                        <label class="interruptor">
+                            <input type="checkbox" role="switch" name="avisos_email"
+                                aria-labelledby="cfg-avisos_email-t">
+                            <span class="interruptor__trilho"></span>
+                        </label>
+                    </div>
+                    <div class="preferencia">
+                        <div>
+                            <p class="preferencia__titulo" id="cfg-alerta_estoque-t">Alerta de estoque baixo</p>
+                            <p class="preferencia__descricao">Avisar quando restarem 5 unidades ou menos</p>
+                        </div>
+                        <label class="interruptor">
+                            <input type="checkbox" role="switch" name="alerta_estoque"
+                                aria-labelledby="cfg-alerta_estoque-t">
+                            <span class="interruptor__trilho"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <p class="modal__alerta" role="alert" hidden></p>
+            <footer class="modal__rodape">
+                <button class="btn btn--secondary" type="button" data-fechar>Cancelar</button>
+                <button class="btn btn--primary" type="submit" data-texto-ocupado="Salvando…">Salvar alterações</button>
+            </footer>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="modal-sair" hidden>
+        <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-sair-titulo" novalidate
+            data-acao="sair" data-foco-cancelar>
+            <header class="modal__cabecalho">
+                <div class="modal__icone modal__icone--alerta" aria-hidden="true">!</div>
+                <h2 class="modal__titulo" id="modal-sair-titulo">Sair do sistema?</h2>
+                <p class="modal__subtitulo">Você será desconectado da sua conta e precisará fazer login novamente.</p>
+            </header>
+            <p class="modal__alerta" role="alert" hidden></p>
+            <footer class="modal__rodape">
+                <button class="btn btn--secondary" type="button" data-fechar>Cancelar</button>
+                <button class="btn btn--primary" type="submit" data-texto-ocupado="Saindo…">Sair</button>
+            </footer>
+        </form>
+    </div>
+
+    <div class="toast" id="toast" role="status" hidden></div>
+
+    <noscript>Este sistema precisa de JavaScript para funcionar.</noscript>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
