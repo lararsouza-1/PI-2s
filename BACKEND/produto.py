@@ -25,3 +25,4 @@ def buscarProduto(id=None, nome=None):
 
        if id is None and nome == "":
             return "Nome invalido"
+            
