@@ -1,5 +1,8 @@
+import sqlite3
+from banco import CAMINHO_BANCO, criarBanco
+
 def cadastrarProduto(nome, preco, quantidade):
-    if nome == "":
+    if not isinstance(nome, str) or nome.strip() == "":
         return "Nome obrigatorio"
 
     if preco <= 0:
@@ -11,7 +14,26 @@ def cadastrarProduto(nome, preco, quantidade):
     if quantidade <= 0:
         return "A quantidade deve ser maior que zero"
 
-    # cadastrar produto no banco}
+    criarBanco()
+
+    conexao = sqlite3.connect(CAMINHO_BANCO)
+
+    try:
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+            INSERT INTO produtos (nome, preco, quantidade)
+            VALUES (?, ?, ?)
+        """, (nome.strip(), preco, quantidade))
+
+        conexao.commit()
+
+        return "Produto cadastrado com sucesso!"
+
+    finally:
+        
+        conexao.close()
+
 
 def buscarProduto(id=None, nome=None):
        if id is None and nome is None:
