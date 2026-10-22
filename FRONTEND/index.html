@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Entrar — Anvellis</title>
 
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23681121'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Georgia' font-weight='700' text-anchor='middle' fill='white'%3EA%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="CSS/style.css">
 </head>
 
@@ -17,39 +19,96 @@
     </section>
 
     <main class="login__painel">
-      <form class="login__form" id="form-login" novalidate>
-        <div>
-          <h1 class="titulo-pagina">Bem-vindo à Anvellis</h1>
-        </div>
+      <form class="login__form" id="form-login" data-acao="login" novalidate>
+        <h1 class="titulo-pagina">Bem-vindo à Anvellis</h1>
         <p class="login__sub">Acesse o sistema para gerenciar produtos, estoque e vendas.</p>
 
         <div class="campo">
-          <label class="campo__rotulo" for="email">E-mail</label>
-          <input class="campo__entrada" id="email" name="email" type="email" placeholder="seuemail@anvellis.com"
-            autocomplete="email">
-          <p class="campo__erro" id="email-erro" hidden></p>
+          <label class="campo__rotulo" for="login-email">E-mail</label>
+          <input class="campo__entrada" id="login-email" name="email" type="email" placeholder="seuemail@anvellis.com"
+            autocomplete="email" required data-msg-obrigatorio="Informe seu e-mail."
+            data-msg-email="Informe um e-mail válido." aria-describedby="login-email-erro">
+          <p class="campo__erro" id="login-email-erro" hidden></p>
         </div>
 
         <div class="campo">
-          <label class="campo__rotulo" for="senha">Senha</label>
-          <input class="campo__entrada" id="senha" name="senha" type="password" placeholder="Digite sua senha"
-            autocomplete="current-password">
-          <p class="campo__erro" id="senha-erro" hidden></p>
+          <label class="campo__rotulo" for="login-senha">Senha</label>
+          <input class="campo__entrada" id="login-senha" name="senha" type="password" placeholder="Digite sua senha"
+            autocomplete="current-password" required data-msg-obrigatorio="Informe sua senha."
+            aria-describedby="login-senha-erro">
+          <p class="campo__erro" id="login-senha-erro" hidden></p>
         </div>
 
         <div class="login__opcoes">
-          <label class="check"><input type="checkbox" name="lembrar" id="lembrar"> Lembrar de mim</label>
-          <button class="link" type="button" id="btn-esqueci">Esqueci minha senha</button>
+          <label class="check"><input type="checkbox" name="lembrar"> Lembrar de mim</label>
+          <button class="link" type="button" data-abrir="modal-recuperar-senha">Esqueci minha senha</button>
         </div>
 
-        <button class="btn btn--primary btn--bloco" type="submit">Entrar</button>
+        <button class="btn btn--primary btn--bloco" type="submit" data-texto-ocupado="Entrando…">Entrar</button>
 
         <p class="login__rodape">Ainda não possui uma conta? <a href="cadastro.html">Cadastre-se</a></p>
-
       </form>
     </main>
 
   </div>
+
+  <div class="modal-overlay" id="modal-recuperar-senha" hidden>
+    <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-recuperar-senha-titulo" novalidate
+      data-acao="recuperar-senha">
+      <header class="modal__cabecalho">
+        <h2 class="modal__titulo" id="modal-recuperar-senha-titulo">Recuperar senha</h2>
+        <p class="modal__subtitulo">Informe seu e-mail para receber o link de redefinição.</p>
+      </header>
+      <div class="modal__corpo">
+        <div class="campo">
+          <label class="campo__rotulo" for="rs-email">E-mail</label>
+          <input class="campo__entrada" id="rs-email" name="email" type="email" placeholder="seuemail@anvellis.com"
+            autocomplete="email" required data-msg-obrigatorio="Informe um e-mail válido."
+            data-msg-email="Informe um e-mail válido." aria-describedby="rs-email-erro">
+          <p class="campo__erro" id="rs-email-erro" hidden></p>
+        </div>
+      </div>
+      <p class="modal__alerta" role="alert" hidden></p>
+      <footer class="modal__rodape">
+        <button class="btn btn--secondary" type="button" data-fechar>Cancelar</button>
+        <button class="btn btn--primary" type="submit" data-texto-ocupado="Enviando…">Enviar link</button>
+      </footer>
+    </form>
+  </div>
+
+  <div class="modal-overlay" id="modal-erro-login" hidden>
+    <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-erro-login-titulo" novalidate>
+      <header class="modal__cabecalho">
+        <div class="modal__icone modal__icone--perigo" aria-hidden="true">!</div>
+        <h2 class="modal__titulo" id="modal-erro-login-titulo">Não foi possível entrar</h2>
+        <p class="modal__subtitulo">E-mail ou senha incorretos. Verifique seus dados e tente novamente.</p>
+      </header>
+      <p class="modal__alerta" role="alert" hidden></p>
+      <footer class="modal__rodape">
+        <button class="btn btn--secondary" type="button" data-abrir="modal-recuperar-senha">Esqueci minha senha</button>
+        <button class="btn btn--primary" type="button" data-clique="tentar-novamente-login">Tentar novamente</button>
+      </footer>
+    </form>
+  </div>
+
+  <div class="modal-overlay" id="modal-erro-servidor" hidden>
+    <form class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-erro-servidor-titulo" novalidate>
+      <header class="modal__cabecalho">
+        <div class="modal__icone modal__icone--alerta" aria-hidden="true">!</div>
+        <h2 class="modal__titulo" id="modal-erro-servidor-titulo" data-campo="titulo"></h2>
+        <p class="modal__subtitulo" data-campo="mensagem"></p>
+      </header>
+      <p class="modal__alerta" role="alert" hidden></p>
+      <footer class="modal__rodape">
+        <button class="btn btn--primary" type="button" data-fechar>Fechar</button>
+      </footer>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <noscript>Este sistema precisa de JavaScript para funcionar.</noscript>
+  <script src="js/api.js"></script>
   <script src="js/app.js"></script>
 </body>
 
