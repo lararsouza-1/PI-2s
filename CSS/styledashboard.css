@@ -1,0 +1,8 @@
+body {
+    display: flex;
+}
+aside {
+    width: 240px;
+    background-color: #f9f8f7;
+    padding: 20px;
+}
