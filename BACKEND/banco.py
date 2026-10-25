@@ -72,6 +72,7 @@ def criarBanco():
 )
 """)
 
+    # Só existe uma linha de configurações (id = 1)
     cursor.execute("""
   CREATE TABLE IF NOT EXISTS configuracoes (
     id INTEGER PRIMARY KEY CHECK (id = 1),
