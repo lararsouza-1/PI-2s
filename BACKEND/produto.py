@@ -45,6 +45,32 @@ def buscarProduto(id=None, nome=None):
        if id is not None and id <= 0:
             return "ID invalido"
 
-       if id is None and nome == "":
+       if id is None and (not isinstance(nome, str) or nome.strip() == ""):
             return "Nome invalido"
-            
+
+       criarBanco()
+
+       conexao = sqlite3.connect(CAMINHO_BANCO)
+
+       try:
+           cursor = conexao.cursor()
+           if id is not None:
+               cursor.execute(
+               "SELECT * FROM produtos WHERE id = ?",(id,)
+               ) 
+
+           else:
+               cursor.execute(
+                   "SELECT * FROM produtos WHERE nome = ?",
+                   (nome.strip(),)
+               )
+
+           produto = cursor.fetchone()
+
+           if produto is None:
+               return "Produto não encontrado"
+
+           return produto
+               
+       finally:
+           conexao.close() 
